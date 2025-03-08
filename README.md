@@ -311,20 +311,23 @@ dump_task:       2     0 100 RR       Kthread -   Waiting Unlock     00000000000
 
 How did we get here? Let's walk through the steps...
 
-# Work In Progress
+# Allwinner A527 Docs
 
-We take NuttX for Arm64 QEMU knsh and tweak it iteratively for Avaota-A1 SBC, based on Allwinner A537 SoC...
-
-## Allwinner A537 Docs
+We used these docs (A527 is a variant of A523)
 
 - https://linux-sunxi.org/A523
 - https://linux-sunxi.org/File:A527_Datasheet_V0.93.pdf
 - https://linux-sunxi.org/File:A523_User_Manual_V1.1_merged_cleaned.pdf
 
+# Work In Progress
+
+We take NuttX for Arm64 QEMU knsh and tweak it iteratively for Avaota-A1 SBC, based on Allwinner A537 SoC...
+
 ## UART0 Port is here
 
+From [A523 User Manual](https://linux-sunxi.org/File:A523_User_Manual_V1.1_merged_cleaned.pdf), Page 1839
+
 ```text
-Page 1839
 Module Name Base Address
 UART0 0x02500000
 
@@ -433,7 +436,7 @@ Still stuck at: `enable_mmu_el1: Enable the MMU and data cache`
 
 ## Hmmm the Peripheral Address Space is missing. UART0 will crash!
 
-Memory Map: Page 42
+From [A523 User Manual](https://linux-sunxi.org/File:A523_User_Manual_V1.1_merged_cleaned.pdf), Memory Map: Page 42
 
 ```text
 BROM & SRAM
@@ -494,7 +497,8 @@ arm64_gic_initialize: no distributor detected, giving up ret=-19
 
 ## Ah we forgot the GIC Address!
 
-Page 263
+From [A523 User Manual](https://linux-sunxi.org/File:A523_User_Manual_V1.1_merged_cleaned.pdf), Page 263
+
 ```text
 Module Name Base Address Comments
 GIC
