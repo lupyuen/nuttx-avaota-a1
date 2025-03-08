@@ -77,7 +77,15 @@ pushd ../apps
 make -j import
 popd
 
-## TODO: Bundle the NuttX Apps into ROMFS
+## Generate the Initial RAM Disk
+genromfs -f initrd -d ../apps/bin -V "NuttXBootVol"
+
+## Prepare a Padding with 64 KB of zeroes
+head -c 65536 /dev/zero >/tmp/nuttx.pad
+
+## Append Padding and Initial RAM Disk to the NuttX Kernel
+cat nuttx.bin /tmp/nuttx.pad initrd \
+  >Image
 
 ## Get the Home Assistant Token, copied from http://localhost:8123/profile/security
 ## token=xxxx
@@ -97,7 +105,7 @@ set -x  ##  Enable echo
 
 ## Copy NuttX Image to MicroSD
 ## No password needed for sudo, see below
-scp nuttx.bin thinkcentre:/tmp/Image
+scp Image thinkcentre:/tmp/Image
 ssh thinkcentre ls -l /tmp/Image
 ssh thinkcentre sudo /home/user/copy-image.sh
 
@@ -125,14 +133,16 @@ curl \
 set -x  ##  Enable echo
 ```
 
-[(See the __Build Log__)](https://gist.github.com/lupyuen/c7aebd4616db0167f12166fe2bc7ffa1)
+[(See the __Build Log__)](https://gist.github.com/lupyuen/6c0607daa0a8f37bda37cc80e76259ee)
 
 (__copy-image.sh__ is explained below)
 
 # Boot NuttX for Avaota-A1
 
+NuttX boots to NSH Shell. And passes OSTest yay!
+
 Here's the latest NuttX Boot Log:
-- https://gist.github.com/lupyuen/3c587ac0f32be155c8f9a9e4ca18676c
+- https://gist.github.com/lupyuen/c2248e7537ca98333d47e33b232217b6
 
 <span style="font-size:60%">
 
@@ -140,58 +150,58 @@ Here's the latest NuttX Boot Log:
 [    0.000255][I]  _____     _           _____ _ _
 [    0.006320][I] |   __|_ _| |_ ___ ___|  |  |_| |_
 [    0.012456][I] |__   | | |  _| -_|  _|    -| | _|
-[    0.018592][I] |_____|_  |_| |___|_| |__|__|_|_|
-[    0.024745][I]       |___|
-[    0.030846][I] ***********************************
-[    0.036965][I]  SyterKit v0.4.0 Commit: e4c0651
-[    0.042832][I]  github.com/YuzukiHD/SyterKit
-[    0.048968][I] ***********************************
-[    0.055070][I]  Built by: arm-none-eabi-gcc 13.2.1
-[    0.061197][I]
-[    0.064021][I] Model: AvaotaSBC Avaota A1 board.
-[    0.069942][I] Core: Arm Octa-Core Cortex-A55 v65 r2p0
-[    0.076434][I] Chip SID = 0300ff1071c048247590d120506d1ed4
-[    0.083358][I] Chip type = A527M000000H Chip Version = 2
-[    0.091477][I] PMU: Found AXP717 PMU, Addr 0x35
-[    0.098287][I] PMU: Found AXP323 PMU
-[    0.112983][I] DRAM BOOT DRIVE INFO: V0.6581
-[    0.118448][I] Set DRAM Voltage to 1160mv
-[    0.123654][I] DRAM_VCC set to 1160 mv
-[    0.248092][I] DRAM retraining ten
-[    0.266349][I] [AUTO DEBUG]32bit,2 ranks training success!
-[    0.296518][I] Soft Training Version: T2.0
-[    1.817356][I] [SOFT TRAINING] CLK=1200M Stable memtest pass
-[    1.824307][I] DRAM CLK =1200 MHZ
-[    1.828761][I] DRAM Type =8 (3:DDR3,4:DDR4,6:LPDDR2,7:LPDDR3,8:LPDDR4)
-[    1.840870][I] DRAM SIZE =4096 MBytes, para1 = 310a, para2 = 10001000, tpr13 = 6061
-[    1.851216][I] DRAM simple test OK.
-[    1.855823][I] Init DRAM Done, DRAM Size = 4096M
-[    2.276387][I] SMHC: sdhci0 controller initialized
-[    2.303911][I]   Capacity: 59.48GB
-[    2.308522][I] SHMC: SD card detected
-[    2.317620][I] FATFS: read bl31.bin addr=48000000
-[    2.337822][I] FATFS: read in 13ms at 5.92MB/S
-[    2.343579][I] FATFS: read scp.bin addr=48100000
-[    2.372799][I] FATFS: read in 22ms at 8.00MB/S
-[    2.378551][I] FATFS: read extlinux/extlinux.conf addr=40020000
-[    2.387505][I] FATFS: read in 1ms at 0.29MB/S
-[    2.393162][I] FATFS: read splash.bin addr=40080000
-[    2.401207][I] FATFS: read in 1ms at 12.66MB/S
-[    3.192009][I] FATFS: read /Image addr=40800000
-[    3.299954][I] FATFS: read in 103ms at 8.76MB/S
-[    3.305804][I] FATFS: read /dtb/allwinner/sun55i-t527-avaota-a1.dtb addr=40400000
-[    3.358608][I] FATFS: read in 20ms at 7.08MB/S
-[    3.364360][I] FATFS: read /uInitrd addr=43000000
-[    4.071917][I] FATFS: read in 701ms at 9.05MB/S
-[    4.077768][I] Initrd load 0x43000000, Size 0x00632414
-[    5.346100][W] FDT: bootargs is null, using extlinux.conf append.
-[    5.644926][I] EXTLINUX: load extlinux done, now booting...
-[    5.651919][I] ATF: Kernel addr: 0x40800000
-[    5.657460][I] ATF: Kernel DTB addr: 0x40400000
-[    5.847029][I] disable mmu ok...
-[    5.851558][I] disable dcache ok...
-[    5.856422][I] disable icache ok...
-[    5.861287][I] free interrupt ok...
+[    0.018566][I] |_____|_  |_| |___|_| |__|__|_|_|
+[    0.024719][I]       |___|
+[    0.030820][I] ***********************************
+[    0.036948][I]  SyterKit v0.4.0 Commit: e4c0651
+[    0.042781][I]  github.com/YuzukiHD/SyterKit
+[    0.048882][I] ***********************************
+[    0.054992][I]  Built by: arm-none-eabi-gcc 13.2.1
+[    0.061119][I]
+[    0.063943][I] Model: AvaotaSBC Avaota A1 board.
+[    0.069856][I] Core: Arm Octa-Core Cortex-A55 v65 r2p0
+[    0.076356][I] Chip SID = 0300ff1071c048247590d120506d1ed4
+[    0.083280][I] Chip type = A527M000000H Chip Version = 2
+[    0.091391][I] PMU: Found AXP717 PMU, Addr 0x35
+[    0.098200][I] PMU: Found AXP323 PMU
+[    0.112870][I] DRAM BOOT DRIVE INFO: V0.6581
+[    0.118326][I] Set DRAM Voltage to 1160mv
+[    0.123524][I] DRAM_VCC set to 1160 mv
+[    0.247920][I] DRAM retraining ten
+[    0.266135][I] [AUTO DEBUG]32bit,2 ranks training success!
+[    0.296290][I] Soft Training Version: T2.0
+[    1.819657][I] [SOFT TRAINING] CLK=1200M Stable memtest pass
+[    1.826565][I] DRAM CLK =1200 MHZ
+[    1.830992][I] DRAM Type =8 (3:DDR3,4:DDR4,6:LPDDR2,7:LPDDR3,8:LPDDR4)
+[    1.843100][I] DRAM SIZE =4096 MBytes, para1 = 310a, para2 = 10001000, tpr13 = 6061
+[    1.853431][I] DRAM simple test OK.
+[    1.858011][I] Init DRAM Done, DRAM Size = 4096M
+[    2.278300][I] SMHC: sdhci0 controller initialized
+[    2.305826][I]   Capacity: 59.48GB
+[    2.310439][I] SHMC: SD card detected
+[    2.319537][I] FATFS: read bl31.bin addr=48000000
+[    2.339744][I] FATFS: read in 13ms at 5.92MB/S
+[    2.345498][I] FATFS: read scp.bin addr=48100000
+[    2.374729][I] FATFS: read in 22ms at 8.00MB/S
+[    2.380481][I] FATFS: read extlinux/extlinux.conf addr=40020000
+[    2.389436][I] FATFS: read in 1ms at 0.29MB/S
+[    2.395095][I] FATFS: read splash.bin addr=40080000
+[    2.403142][I] FATFS: read in 1ms at 12.66MB/S
+[    3.193943][I] FATFS: read /Image addr=40800000
+[    3.341455][I] FATFS: read in 143ms at 8.86MB/S
+[    3.347308][I] FATFS: read /dtb/allwinner/sun55i-t527-avaota-a1.dtb addr=40400000
+[    3.400140][I] FATFS: read in 19ms at 7.46MB/S
+[    3.405891][I] FATFS: read /uInitrd addr=43000000
+[    4.113508][I] FATFS: read in 702ms at 9.04MB/S
+[    4.119356][I] Initrd load 0x43000000, Size 0x00632414
+[    5.376346][W] FDT: bootargs is null, using extlinux.conf append.
+[    5.688989][I] EXTLINUX: load extlinux done, now booting...
+[    5.695984][I] ATF: Kernel addr: 0x40800000
+[    5.701523][I] ATF: Kernel DTB addr: 0x40400000
+[    5.891085][I] disable mmu ok...
+[    5.895615][I] disable dcache ok...
+[    5.900478][I] disable icache ok...
+[    5.905342][I] free interrupt ok...
 NOTICE:  BL31: v2.5(debug):9241004a9
 NOTICE:  BL31: Built : 13:37:46, Nov 16 2023
 NOTICE:  BL31: No DTB found.
@@ -206,266 +216,69 @@ ERROR:   Error initializing runtime service opteed_fast
 - Boot from EL1
 - Boot to C runtime for OS Initialize
 ABarm64_mmu_init:
-arm64_mmu_init: xlat tables:
-arm64_mmu_init: base table(L0): 0x4083c000, 512 entries
-arm64_mmu_init: 0: 0x40832000
-arm64_mmu_init: 1: 0x40833000
-arm64_mmu_init: 2: 0x40834000
-arm64_mmu_init: 3: 0x40835000
-arm64_mmu_init: 4: 0x40836000
-arm64_mmu_init: 5: 0x40837000
-arm64_mmu_init: 6: 0x40838000
-arm64_mmu_init: 7: 0x40839000
-arm64_mmu_init: 8: 0x4083a000
-arm64_mmu_init: 9: 0x4083b000
 setup_page_tables:
-init_xlat_tables: name=DEVICE_REGION
-init_xlat_tables: mmap: virt 0 phys 0 size 0x40000000
-set_pte_table_desc:
-set_pte_table_desc: 0x4083c000: [Table] 0x40832000
-init_xlat_tables: name=DRAM0_S0
-init_xlat_tables: mmap: virt 0x40000000 phys 0x40000000 size 0x8000000
-set_pte_table_desc:
-set_pte_table_desc: 0x40832008: [Table] 0x40833000
-init_xlat_tables: name=nx_code
-init_xlat_tables: mmap: virt 0x40800000 phys 0x40800000 size 0x28000
-split_pte_block_desc: Splitting existing PTE 0x40833020(L2)
-set_pte_table_desc:
-set_pte_table_desc: 0x40833020: [Table] 0x40834000
-init_xlat_tables: name=nx_rodata
-init_xlat_tables: mmap: virt 0x40828000 phys 0x40828000 size 0x8000
-init_xlat_tables: name=nx_data
-init_xlat_tables: mmap: virt 0x40830000 phys 0x40830000 size 0x13000
-init_xlat_tables: name=nx_pgpool
-init_xlat_tables: mmap: virt 0x40a00000 phys 0x40a00000 size 0x400000
 enable_mmu_el1:
 enable_mmu_el1: UP_MB
 enable_mmu_el1: Enable the MMU and data cache
-enable_mmu_el1: UP_ISB
-enable_mmu_el1: MMU enabled with dcache
-nx_start: Entryetected PSCI v1.1
-up_allocate_kheap: CONFIG_RAM_END=0x48000000, g_idle_topstack=0x40843000
-up_allocate_kheap: heap_start=0x0x40843000, heap_size=0x77bd000
-gic_validate_dist_version: GICv3 version detect
-gic_validate_dist_version: GICD_TYPER = 0x7b0408
-gic_validate_dist_version: 256 SPIs implemented
-gic_validate_dist_version: 0 Extended SPIs implemented
-gic_validate_dist_version: Distributor has no Range Selector support
-gic_validate_dist_version: MBIs is present, But No support
-gic_validate_redist_version: GICR_TYPER = 0x21
-gic_validate_redist_version: 16 PPIs implemented
-gic_validate_redist_version: no VLPI support, no direct LPI support
-uart_register: Registering /dev/console
-uart_register: Registering /dev/ttyS0
-work_start_highpri: Starting high-priority kernel worker thread(s)
-nxtask_activate: hpwork pid=1,TCB=0x40843e78
-work_start_lowpri: Starting low-priority kernel worker thread(s)
-nxtask_activate: lpwork pid=2,TCB=0x40846008
-nxtask_activate: AppBringUp pid=3,TCB=0x40846190
+up_allocate_kheap: CONFIG_RAM_END=0x48000000, g_idle_topstack=0x40847000
 qemu_bringup:
 mount_ramdisk:
 nx_start_application: ret=0
-nx_start_application: Starting init task: /system/bin/init
-nxtask_activate: /system/bin/init pid=4,TCB=0x408469f0
-nxtask_exit: AppBringUp pid=3,TCB=0x40846190
 board_app_initialize:
-nx_start: CPU0: Beginning Idle Loop
-set_pte_table_desc:
-set_pte_table_desc: 0x4083c000: [Table] 0x40832000
-init_xlat_tables: name=DRAM0_S0
-init_xlat_tables: mmap: virt 0x40000000 phys 0x40000000 size 0x8000000
-set_pte_table_desc:
-set_pte_table_desc: 0x40832008: [Table] 0x40833000
-init_xlat_tables: name=nx_code
-init_xlat_tables: mmap: virt 0x40800000 phys 0x40800000 size 0x28000
-split_pte_block_desc: Splitting existing PTE 0x40833020(L2)
-set_pte_table_desc:
-set_pte_table_desc: 0x40833020: [Table] 0x40834000
-init_xlat_tables: name=nx_rodata
-init_xlat_tables: mmap: virt 0x40828000 phys 0x40828000 size 0x8000
-init_xlat_tables: name=nx_data
-init_xlat_tables: mmap: virt 0x40830000 phys 0x40830000 size 0x13000
-init_xlat_tables: name=nx_pgpool
-init_xlat_tables: mmap: virt 0x40a00000 phys 0x40a00000 size 0x400000
-enable_mmu_el1:
-enable_mmu_el1: UP_MB
-enable_mmu_el1: Enable the MMU and data cache
-enable_mmu_el1: UP_ISB
-enable_mmu_el1: MMU enabled with dcache
-nx_start: Entryetected PSCI v1.1
-up_allocate_kheap: CONFIG_RAM_END=0x48000000, g_idle_topstack=0x40843000
-up_allocate_kheap: heap_start=0x0x40843000, heap_size=0x77bd000
-gic_validate_dist_version: GICv3 version detect
-gic_validate_dist_version: GICD_TYPER = 0x7b0408
-gic_validate_dist_version: 256 SPIs implemented
-gic_validate_dist_version: 0 Extended SPIs implemented
-gic_validate_dist_version: Distributor has no Range Selector support
-gic_validate_dist_version: MBIs is present, But No support
-gic_validate_redist_version: GICR_TYPER = 0x21
-gic_validate_redist_version: 16 PPIs implemented
-gic_validate_redist_version: no VLPI support, no direct LPI support
-uart_register: Registering /dev/console
-uart_register: Registering /dev/ttyS0
-work_start_highpri: Starting high-priority kernel worker thread(s)
-nxtask_activate: hpwork pid=1,TCB=0x40843e78
-work_start_lowpri: Starting low-priority kernel worker thread(s)
-nxtask_activate: lpwork pid=2,TCB=0x40846008
-nxtask_activate: AppBringUp pid=3,TCB=0x40846190
-qemu_bringup:
-mount_ramdisk:
-nx_start_application: ret=0
-nx_start_application: Starting init task: /system/bin/init
-nxtask_activate: /system/bin/init pid=4,TCB=0x408469f0
-nxtask_exit: AppBringUp pid=3,TCB=0x40846190
-board_app_initialize:
-nx_start: CPU0: Beginning Idle Loop
-set_pte_table_desc:
-set_pte_table_desc: 0x4083c000: [Table] 0x40832000
-init_xlat_tables: name=DRAM0_S0
-init_xlat_tables: mmap: virt 0x40000000 phys 0x40000000 size 0x8000000
-set_pte_table_desc:
-set_pte_table_desc: 0x40832008: [Table] 0x40833000
-init_xlat_tables: name=nx_code
-init_xlat_tables: mmap: virt 0x40800000 phys 0x40800000 size 0x28000
-split_pte_block_desc: Splitting existing PTE 0x40833020(L2)
-set_pte_table_desc:
-set_pte_table_desc: 0x40833020: [Table] 0x40834000
-init_xlat_tables: name=nx_rodata
-init_xlat_tables: mmap: virt 0x40828000 phys 0x40828000 size 0x8000
-init_xlat_tables: name=nx_data
-init_xlat_tables: mmap: virt 0x40830000 phys 0x40830000 size 0x13000
-init_xlat_tables: name=nx_pgpool
-init_xlat_tables: mmap: virt 0x40a00000 phys 0x40a00000 size 0x400000
-enable_mmu_el1:
-enable_mmu_el1: UP_MB
-enable_mmu_el1: Enable the MMU and data cache
-enable_mmu_el1: UP_ISB
-enable_mmu_el1: MMU enabled with dcache
-nx_start: Entryetected PSCI v1.1
-up_allocate_kheap: CONFIG_RAM_END=0x48000000, g_idle_topstack=0x40843000
-up_allocate_kheap: heap_start=0x0x40843000, heap_size=0x77bd000
-gic_validate_dist_version: GICv3 version detect
-gic_validate_dist_version: GICD_TYPER = 0x7b0408
-gic_validate_dist_version: 256 SPIs implemented
-gic_validate_dist_version: 0 Extended SPIs implemented
-gic_validate_dist_version: Distributor has no Range Selector support
-gic_validate_dist_version: MBIs is present, But No support
-gic_validate_redist_version: GICR_TYPER = 0x21
-gic_validate_redist_version: 16 PPIs implemented
-gic_validate_redist_version: no VLPI support, no direct LPI support
-uart_register: Registering /dev/console
-uart_register: Registering /dev/ttyS0
-work_start_highpri: Starting high-priority kernel worker thread(s)
-nxtask_activate: hpwork pid=1,TCB=0x40843e78
-work_start_lowpri: Starting low-priority kernel worker thread(s)
-nxtask_activate: lpwork pid=2,TCB=0x40846008
-nxtask_activate: AppBringUp pid=3,TCB=0x40846190
-qemu_bringup:
-mount_ramdisk:
-nx_start_application: ret=0
-nx_start_application: Starting init task: /system/bin/init
-nxtask_activate: /system/bin/init pid=4,TCB=0x408469f0
-nxtask_exit: AppBringUp pid=3,TCB=0x40846190
-board_app_initialize:
-nx_start: CPU0: Beginning Idle Loop
-set_pte_table_desc:
-set_pte_table_desc: 0x4083c000: [Table] 0x40832000
-init_xlat_tables: name=DRAM0_S0
-init_xlat_tables: mmap: virt 0x40000000 phys 0x40000000 size 0x8000000
-set_pte_table_desc:
-set_pte_table_desc: 0x40832008: [Table] 0x40833000
-init_xlat_tables: name=nx_code
-init_xlat_tables: mmap: virt 0x40800000 phys 0x40800000 size 0x28000
-split_pte_block_desc: Splitting existing PTE 0x40833020(L2)
-set_pte_table_desc:
-set_pte_table_desc: 0x40833020: [Table] 0x40834000
-init_xlat_tables: name=nx_rodata
-init_xlat_tables: mmap: virt 0x40828000 phys 0x40828000 size 0x8000
-init_xlat_tables: name=nx_data
-init_xlat_tables: mmap: virt 0x40830000 phys 0x40830000 size 0x13000
-init_xlat_tables: name=nx_pgpool
-init_xlat_tables: mmap: virt 0x40a00000 phys 0x40a00000 size 0x400000
-enable_mmu_el1:
-enable_mmu_el1: UP_MB
-enable_mmu_el1: Enable the MMU and data cache
-enable_mmu_el1: UP_ISB
-enable_mmu_el1: MMU enabled with dcache
-nx_start: Entryetected PSCI v1.1
-up_allocate_kheap: CONFIG_RAM_END=0x48000000, g_idle_topstack=0x40843000
-up_allocate_kheap: heap_start=0x0x40843000, heap_size=0x77bd000
-gic_validate_dist_version: GICv3 version detect
-gic_validate_dist_version: GICD_TYPER = 0x7b0408
-gic_validate_dist_version: 256 SPIs implemented
-gic_validate_dist_version: 0 Extended SPIs implemented
-gic_validate_dist_version: Distributor has no Range Selector support
-gic_validate_dist_version: MBIs is present, But No support
-gic_validate_redist_version: GICR_TYPER = 0x21
-gic_validate_redist_version: 16 PPIs implemented
-gic_validate_redist_version: no VLPI support, no direct LPI support
-uart_register: Registering /dev/console
-uart_register: Registering /dev/ttyS0
-work_start_highpri: Starting high-priority kernel worker thread(s)
-nxtask_activate: hpwork pid=1,TCB=0x40843e78
-work_start_lowpri: Starting low-priority kernel worker thread(s)
-nxtask_activate: lpwork pid=2,TCB=0x40846008
-nxtask_activate: AppBringUp pid=3,TCB=0x40846190
-qemu_bringup:
-mount_ramdisk:
-nx_start_application: ret=0
-nx_start_application: Starting init task: /system/bin/init
-nxtask_activate: /system/bin/init pid=4,TCB=0x408469f0
-nxtask_exit: AppBringUp pid=3,TCB=0x40846190
-board_app_initialize:
-nx_start: CPU0: Beginning Idle Loop
-set_pte_table_desc:
-set_pte_table_desc: 0x4083c000: [Table] 0x40832000
-init_xlat_tables: name=DRAM0_S0
-init_xlat_tables: mmap: virt 0x40000000 phys 0x40000000 size 0x8000000
-set_pte_table_desc:
-set_pte_table_desc: 0x40832008: [Table] 0x40833000
-init_xlat_tables: name=nx_code
-init_xlat_tables: mmap: virt 0x40800000 phys 0x40800000 size 0x28000
-split_pte_block_desc: Splitting existing PTE 0x40833020(L2)
-set_pte_table_desc:
-set_pte_table_desc: 0x40833020: [Table] 0x40834000
-init_xlat_tables: name=nx_rodata
-init_xlat_tables: mmap: virt 0x40828000 phys 0x40828000 size 0x8000
-init_xlat_tables: name=nx_data
-init_xlat_tables: mmap: virt 0x40830000 phys 0x40830000 size 0x13000
-init_xlat_tables: name=nx_pgpool
-init_xlat_tables: mmap: virt 0x40a00000 phys 0x40a00000 size 0x400000
-enable_mmu_el1:
-enable_mmu_el1: UP_MB
-enable_mmu_el1: Enable the MMU and data cache
-enable_mmu_el1: UP_ISB
-enable_mmu_el1: MMU enabled with dcache
-nx_start: Entryetected PSCI v1.1
-up_allocate_kheap: CONFIG_RAM_END=0x48000000, g_idle_topstack=0x40843000
-up_allocate_kheap: heap_start=0x0x40843000, heap_size=0x77bd000
-gic_validate_dist_version: GICv3 version detect
-gic_validate_dist_version: GICD_TYPER = 0x7b0408
-gic_validate_dist_version: 256 SPIs implemented
-gic_validate_dist_version: 0 Extended SPIs implemented
-gic_validate_dist_version: Distributor has no Range Selector support
-gic_validate_dist_version: MBIs is present, But No support
-gic_validate_redist_version: GICR_TYPER = 0x21
-gic_validate_redist_version: 16 PPIs implemented
-gic_validate_redist_version: no VLPI support, no direct LPI support
-uart_register: Registering /dev/console
-uart_register: Registering /dev/ttyS0
-work_start_highpri: Starting high-priority kernel worker thread(s)
-nxtask_activate: hpwork pid=1,TCB=0x40843e78
-work_start_lowpri: Starting low-priority kernel worker thread(s)
-nxtask_activate: lpwork pid=2,TCB=0x40846008
-nxtask_activate: AppBringUp pid=3,TCB=0x40846190
-qemu_bringup:
-mount_ramdisk:
-nx_start_application: ret=0
-nx_start_application: Starting init task: /system/bin/init
-nxtask_activate: /system/bin/init pid=4,TCB=0x408469f0
-nxtask_exit: AppBringUp pid=3,TCB=0x40846190
-board_app_initialize:
-nx_start: CPU0: Beginning Idle Loop
+
+NuttShell (NSH) NuttX-12.4.0
+nsh> uname -a
+NuttX 12.4.0 6c5c1a5f9f-dirty Mar  8 2025 21:57:02 arm64 qemu-armv8a
+nsh> free
+      total       used       free    maxused    maxfree  nused  nfree name
+  125538304      33848  125504456      52992  125484976     58      5 Kmem
+    4194304     245760    3948544               3948544               Page
+nsh> ps
+  PID GROUP PRI POLICY   TYPE    NPX STATE    EVENT     SIGMASK            STACK    USED FILLED COMMAND
+    0     0   0 FIFO     Kthread   - Ready              0000000000000000 0008176 0000928  11.3%  Idle_Task
+    1     0 192 RR       Kthread   - Waiting  Semaphore 0000000000000000 0008112 0000992  12.2%  hpwork 0x40834568 0x408345b8
+    2     0 100 RR       Kthread   - Waiting  Semaphore 0000000000000000 0008112 0000992  12.2%  lpwork 0x408344e8 0x40834538
+    4     4 100 RR       Task      - Running            0000000000000000 0008128 0002192  26.9%  /system/bin/init
+nsh> ls -l /dev
+/dev:
+ crw-rw-rw-           0 console
+ crw-rw-rw-           0 null
+ brw-rw-rw-    16777216 ram0
+ crw-rw-rw-           0 ttyS0
+ crw-rw-rw-           0 zero
+nsh> hello
+Hello, World!!
+nsh> getprime
+Set thread priority to 10
+Set thread policy to SCHED_RR
+Start thread #0
+thread #0 started, looking for primes < 10000, doing 10 run(s)
+thread #0 finished, found 1230 primes, last one was 9973
+Done
+getprime took 162 msec
+nsh> hello
+Hello, World!!
+nsh> getprime
+Set thread priority to 10
+Set thread policy to SCHED_RR
+Start thread #0
+thread #0 started, looking for primes < 10000, doing 10 run(s)
+thread #0 finished, found 1230 primes, last one was 9973
+Done
+getprime took 162 msec
+nsh> ostest
+...
+Final memory usage:
+VARIABLE  BEFORE   AFTER
+======== ======== ========
+arena        a000    26000
+ordblks         2        4
+mxordblk     6ff8    1aff8
+uordblks     27e8     6700
+fordblks     7818    1f900
+user_main: Exiting
+ostest_main: Exiting with status 0
+nsh>
 ```
 
 </span>
@@ -801,3 +614,25 @@ nx_start: CPU0: Beginning Idle Loop
 NSH Prompt won't appear until we fix the UART Interrupt...
 
 ## TODO: Fix the UART Interrupt
+
+From [A523 User Manual](https://linux-sunxi.org/File:A523_User_Manual_V1.1_merged_cleaned.pdf), Page 256
+
+```text
+Interrupt Number Interrupt Source Interrupt Vector Description
+34 UART0 0x0088
+```
+
+So we set the UART0 Interrupt...
+
+Set UART0 Interrupt to 34
+- https://github.com/lupyuen2/wip-nuttx/commit/cd6da8f5378eb493528e57c61f887b6585ab8eaf
+
+Disable Logging for MM and Scheduler
+- https://github.com/lupyuen2/wip-nuttx/commit/6c5c1a5f9fb1c939d8e75a5e9544b1a5261165ee
+
+Disable MMU Debugging
+- https://github.com/lupyuen2/wip-nuttx/commit/e5c1b0449d3764d63d447eb96eb7186a27f77c88
+
+NSH Prompt appears! And passes OSTest yay!
+- https://gist.github.com/lupyuen/c2248e7537ca98333d47e33b232217b6
+
