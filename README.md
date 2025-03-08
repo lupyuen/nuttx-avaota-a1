@@ -36,7 +36,7 @@ Well thankfully we have a __MicroSD Multiplexer__ that will make MicroSD Swappin
 
 ![Avaota A1: Default U-Boot in eMMC. No network :-(](https://lupyuen.org/images/testbot3-uboot.jpg)
 
-# Work In Progress
+# Build NuttX for Avaota-A1
 
 See Build Script
 - https://gist.github.com/lupyuen/a4ac110fb8610a976c0ce2621cbb8587
@@ -98,6 +98,126 @@ curl \
     http://localhost:8123/api/services/automation/trigger
 set -x  ##  Enable echo
 ```
+
+# Boot NuttX for Avaota-A1
+
+https://gist.github.com/lupyuen/9e3d1325dc90abc5b695a849a16e9560
+
+<span style="font-size:80%">
+
+```text
+[    0.000256][I]  _____     _           _____ _ _
+[    0.006320][I] |   __|_ _| |_ ___ ___|  |  |_| |_
+[    0.012456][I] |__   | | |  _| -_|  _|    -| | _|
+[    0.018592][I] |_____|_  |_| |___|_| |__|__|_|_|
+[    0.024737][I]       |___|
+[    0.030873][I] ***********************************
+[    0.036991][I]  SyterKit v0.4.0 Commit: e4c0651
+[    0.042807][I]  github.com/YuzukiHD/SyterKit
+[    0.048900][I] ***********************************
+[    0.054992][I]  Built by: arm-none-eabi-gcc 13.2.1
+[    0.061111][I]
+[    0.063926][I] Model: AvaotaSBC Avaota A1 board.
+[    0.069838][I] Core: Arm Octa-Core Cortex-A55 v65 r2p0
+[    0.076304][I] Chip SID = 0300ff1071c048247590d120506d1ed4
+[    0.083202][I] Chip type = A527M000000H Chip Version = 2
+[    0.091016][I] PMU: Found AXP717 PMU, Addr 0x35
+[    0.097828][I] PMU: Found AXP323 PMU
+[    0.112524][I] DRAM BOOT DRIVE INFO: V0.6581
+[    0.117998][I] Set DRAM Voltage to 1160mv
+[    0.123161][I] DRAM_VCC set to 1160 mv
+[    0.247583][I] DRAM retraining ten
+[    0.265811][I] [AUTO DEBUG]32bit,2 ranks training success!
+[    0.295960][I] Soft Training Version: T2.0
+[    1.828055][I] [SOFT TRAINING] CLK=1200M Stable memtest pass
+[    1.835018][I] DRAM CLK =1200 MHZ
+[    1.839445][I] DRAM Type =8 (3:DDR3,4:DDR4,6:LPDDR2,7:LPDDR3,8:LPDDR4)
+[    1.851607][I] DRAM SIZE =4096 MBytes, para1 = 310a, para2 = 10001000, tpr13 = 6061
+[    1.861936][I] DRAM simple test OK.
+[    1.866499][I] Init DRAM Done, DRAM Size = 4096M
+[    2.286925][I] SMHC: sdhci0 controller initialized
+[    2.314450][I]   Capacity: 59.48GB
+[    2.319063][I] SHMC: SD card detected
+[    2.328335][I] FATFS: read bl31.bin addr=48000000
+[    2.348547][I] FATFS: read in 12ms at 6.41MB/S
+[    2.354300][I] FATFS: read scp.bin addr=48100000
+[    2.383544][I] FATFS: read in 21ms at 8.38MB/S
+[    2.389299][I] FATFS: read extlinux/extlinux.conf addr=40020000
+[    2.398254][I] FATFS: read in 1ms at 0.29MB/S
+[    2.403910][I] FATFS: read splash.bin addr=40080000
+[    2.411956][I] FATFS: read in 2ms at 6.33MB/S
+[    3.202648][I] FATFS: read /Image addr=40800000
+[    3.240875][I] FATFS: read in 33ms at 8.06MB/S
+[    3.246629][I] FATFS: read /dtb/allwinner/sun55i-t527-avaota-a1.dtb addr=40400000
+[    3.299473][I] FATFS: read in 20ms at 7.08MB/S
+[    3.305224][I] FATFS: read /uInitrd addr=43000000
+[    4.012885][I] FATFS: read in 702ms at 9.04MB/S
+[    4.018733][I] Initrd load 0x43000000, Size 0x00632414
+[    5.274685][W] FDT: bootargs is null, using extlinux.conf append.
+[    5.573521][I] EXTLINUX: load extlinux done, now booting...
+[    5.580516][I] ATF: Kernel addr: 0x40800000
+[    5.586055][I] ATF: Kernel DTB addr: 0x40400000
+[    5.775617][I] disable mmu ok...
+[    5.780148][I] disable dcache ok...
+[    5.785011][I] disable icache ok...
+[    5.789873][I] free interrupt ok...
+NOTICE:  BL31: v2.5(debug):9241004a9
+NOTICE:  BL31: Built : 13:37:46, Nov 16 2023
+NOTICE:  BL31: No DTB found.
+NOTICE:  [SCP] :wait arisc ready....
+NOTICE:  [SCP] :arisc version: []
+NOTICE:  [SCP] :arisc startup ready
+NOTICE:  [SCP] :arisc startup notify message feedback
+NOTICE:  [SCP] :sunxi-arisc driver is starting
+ERROR:   Error initializing runtime service opteed_fast
+123- Ready to Boot Primary CPU
+- Boot from EL2
+- Boot from EL1
+- Boot to C runtime for OS Initialize
+ABarm64_mmu_init:
+arm64_mmu_init: xlat tables:
+arm64_mmu_init: base table(L0): 0x4083c000, 512 entries
+arm64_mmu_init: 0: 0x40832000
+arm64_mmu_init: 1: 0x40833000
+arm64_mmu_init: 2: 0x40834000
+arm64_mmu_init: 3: 0x40835000
+arm64_mmu_init: 4: 0x40836000
+arm64_mmu_init: 5: 0x40837000
+arm64_mmu_init: 6: 0x40838000
+arm64_mmu_init: 7: 0x40839000
+arm64_mmu_init: 8: 0x4083a000
+arm64_mmu_init: 9: 0x4083b000
+setup_page_tables:
+init_xlat_tables: mmap: virt 0x7000000 phys 0x7000000 size 0x20000000
+set_pte_table_desc:
+set_pte_table_desc: 0x4083c000: [Table] 0x40832000
+set_pte_table_desc:
+set_pte_table_desc: 0x40832000: [Table] 0x40833000
+init_xlat_tables: mmap: virt 0x40000000 phys 0x40000000 size 0x8000000
+set_pte_table_desc:
+set_pte_table_desc: 0x40832008: [Table] 0x40834000
+init_xlat_tables: mmap: virt 0x4010000000 phys 0x4010000000 size 0x10000000
+set_pte_table_desc:
+set_pte_table_desc: 0x40832800: [Table] 0x40835000
+init_xlat_tables: mmap: virt 0x8000000000 phys 0x8000000000 size 0x8000000000
+init_xlat_tables: mmap: virt 0x3eff0000 phys 0x3eff0000 size 0x10000
+set_pte_table_desc:
+set_pte_table_desc: 0x40833fb8: [Table] 0x40836000
+init_xlat_tables: mmap: virt 0x40800000 phys 0x40800000 size 0x2a000
+split_pte_block_desc: Splitting existing PTE 0x40834020(L2)
+set_pte_table_desc:
+set_pte_table_desc: 0x40834020: [Table] 0x40837000
+init_xlat_tables: mmap: virt 0x4082a000 phys 0x4082a000 size 0x6000
+init_xlat_tables: mmap: virt 0x40830000 phys 0x40830000 size 0x13000
+init_xlat_tables: mmap: virt 0x40800000 phys 0x40800000 size 0x400000
+enable_mmu_el1:
+enable_mmu_el1: UP_MB
+enable_mmu_el1: Enable the MMU and data cache
+```
+
+</span>
+
+# Work In Progress
 
 Allwinner A537 Docs:
 - https://linux-sunxi.org/A523
