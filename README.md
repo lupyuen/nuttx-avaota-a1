@@ -381,9 +381,35 @@ dump_assert_info: Assertion failed
 CONFIG_RAM_SIZE should match CONFIG_RAMBANK1_SIZE
 - https://github.com/lupyuen2/wip-nuttx/commit/c8fbc5b86c2bf1dd7b8243b301b0790115c9c4ca
 
-Assertion failure
+GIC Failed
 - https://gist.github.com/lupyuen/3a7d1e791ac14905532db2d768ae230f
 
 ```text
-dump_assert_info: Assertion failed panic: at file: common/arm64_fatal.c:572 task: Idle_Task process: Kernel 0x408067b0
+gic_validate_dist_version: No GIC version detect
+arm64_gic_initialize: no distributor detected, giving up ret=-19
 ```
+
+Page 263
+```text
+Module Name Base Address Comments
+GIC
+GIC600_MON_4 0x03400000 General interrupt controller(23*64KB)
+
+Register Name Offset Description
+GICD_CTLR 0x00000 Distributor Control Register
+GICR_CTLR_C0 0x60000 Redistributor Control Register
+GICR_CTLR_C1 0x80000 Redistributor Control Register
+GICR_CTLR_C2 0xA0000 Redistributor Control Register
+GICR_CTLR_C3 0xC0000 Redistributor Control Register
+GICR_CTLR_C4 0xE0000 Redistributor Control Register
+GICR_CTLR_C5 0x100000 Redistributor Control Register
+GICR_CTLR_C6 0x120000 Redistributor Control Register
+GICR_CTLR_C7 0x140000 Redistributor Control Register
+GICDA_CTLR 0x160000 Distributor Control Register
+```
+
+Set Address of GICD, GICR
+- https://github.com/lupyuen2/wip-nuttx/commit/f3a26dbba69a0714bc91d0c345b8fba5e0835b76
+
+/system/bin/init is missing yay!
+https://gist.github.com/lupyuen/8411f1846f51f66f6a50cc5157df40f9
