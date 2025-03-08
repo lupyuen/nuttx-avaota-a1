@@ -36,9 +36,22 @@ Well thankfully we have a __MicroSD Multiplexer__ that will make MicroSD Swappin
 
 ![Avaota A1: Default U-Boot in eMMC. No network :-(](https://lupyuen.org/images/testbot3-uboot.jpg)
 
+# Prepare the MicroSD
+
+Download the [__Latest AvaotaOS Release__](https://github.com/AvaotaSBC/AvaotaOS/releases) _(Ubuntu Noble GNOME)_ and uncompress it...
+
+```bash
+wget https://github.com/AvaotaSBC/AvaotaOS/releases/download/0.3.0.4/AvaotaOS-0.3.0.4-noble-gnome-arm64-avaota-a1.img.xz
+xz -d AvaotaOS-0.3.0.4-noble-gnome-arm64-avaota-a1.img.xz
+```
+
+Write the __`.img`__ file to a MicroSD with [__Balena Etcher__](https://etcher.balena.io/).
+
+We'll overwrite the `Image` file by `nuttx.bin`...
+
 # Build NuttX for Avaota-A1
 
-See Build Script
+See the Build Script:
 - https://gist.github.com/lupyuen/a4ac110fb8610a976c0ce2621cbb8587
 
 ```bash
