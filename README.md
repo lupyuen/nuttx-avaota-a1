@@ -335,3 +335,34 @@ CONFIG_ARCH_PGPOOL_PBASE should match pgram
 
 Still stuck at: `enable_mmu_el1: Enable the MMU and data cache`
 - https://gist.github.com/lupyuen/544a5d8f3fab2ab7c9d06d2e1583f362
+
+Memory Map: Page 42
+
+```text
+BROM & SRAM
+S_BROM 0x0000 0000---0x0000 AFFF 44 K
+
+PCIE
+PCIE_SLV 0x2000 0000---0x2FFF FFFF 256 MB
+
+DRAM Space
+DRAM SPACE 0x4000 0000---0x13FFF FFFF
+4 GB
+RISC-V core accesses theDRAM address:
+0x4004 0000---0x7FFFFFFF
+```
+
+Remove UART1
+- https://github.com/lupyuen2/wip-nuttx/commit/8fc8ed6ba84cfea86184f61d9c4d7c8e21329987
+
+Add MMU Logging
+- https://github.com/lupyuen2/wip-nuttx/commit/9488ecb5d8eb199bdbe16adabef483cf9cf04843
+
+Remove PCI from MMU Regions
+- https://github.com/lupyuen2/wip-nuttx/commit/ca273d05e015089a33072997738bf588b899f8e7
+
+Set CONFIG_DEVICEIO_BASEADDR to 0x00000000, size 1 GB (0x40000000)
+- https://github.com/lupyuen2/wip-nuttx/commit/005900ef7e1a1480b8df975d0dcd190fbfc60a45
+
+Stack full yay!
+- https://gist.github.com/lupyuen/ad4cec0dee8a21f3f404144be180fa14
