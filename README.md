@@ -297,6 +297,8 @@ dump_task:       2     0 100 RR       Kthread -   Waiting Unlock     00000000000
 
 </span>
 
+How did we get here? Let's walk through the steps...
+
 # Work In Progress
 
 We take NuttX for Arm64 QEMU knsh and tweak it iteratively for Avaota-A1 SBC, based on Allwinner A537 SoC...
