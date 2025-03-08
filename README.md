@@ -96,6 +96,7 @@ curl \
 set -x  ##  Enable echo
 
 ## Copy NuttX Image to MicroSD
+## No password needed for sudo, see below
 scp nuttx.bin thinkcentre:/tmp/Image
 ssh thinkcentre ls -l /tmp/Image
 ssh thinkcentre sudo /home/user/copy-image.sh
@@ -323,6 +324,56 @@ We used these docs (A527 is a variant of A523)
 
 We take NuttX for Arm64 QEMU knsh and tweak it iteratively for Avaota-A1 SBC, based on Allwinner A537 SoC...
 
+## Let's make our Build-Test Cycle quicker. We do Passwordless Sudo for flipping our SDWire Mux
+
+SDWire Mux needs plenty of Sudo Passwords to flip the mux, mount the filesystem, copy to MicroSD.
+
+Let's make it Sudo Password-Less with visudo: https://help.ubuntu.com/community/Sudoers
+
+```bash
+sudo visudo
+<<
+user ALL=(ALL) NOPASSWD: /home/user/copy-image.sh
+>>
+```
+
+Edit /home/user/copy-image.sh...
+
+```bash
+set -e  ## Exit when any command fails
+set -x  ## Echo commands
+whoami  ## I am root!
+
+## Copy /tmp/Image to MicroSD
+sd-mux-ctrl --device-serial=sd-wire_02-09 --ts
+sleep 5
+mkdir -p /tmp/sda1
+mount /dev/sda1 /tmp/sda1
+cp /tmp/Image /tmp/sda1/
+ls -l /tmp/sda1
+
+## Unmount MicroSD and flip it to the Test Device (Avaota-A1 SBC)
+umount /tmp/sda1
+sd-mux-ctrl --device-serial=sd-wire_02-09 --dut
+```
+
+(Remember to `chmod +x /home/user/copy-image.sh`)
+
+Now we can run copy-image.sh without a password yay!
+
+```bash
+## Sudo will NOT prompt for password yay!
+sudo /home/user/copy-image.sh
+
+## Also works over SSH: Copy NuttX Image to MicroSD
+## No password needed for sudo yay!
+scp nuttx.bin thinkcentre:/tmp/Image
+ssh thinkcentre ls -l /tmp/Image
+ssh thinkcentre sudo /home/user/copy-image.sh
+```
+
+[(See the __Build Script__)](https://gist.github.com/lupyuen/a4ac110fb8610a976c0ce2621cbb8587)
+
 ## UART0 Port is here
 
 From [A523 User Manual](https://linux-sunxi.org/File:A523_User_Manual_V1.1_merged_cleaned.pdf), Page 1839
@@ -374,40 +425,6 @@ Prints more yay!
 - Boot to C runtime for OS Initialize
 AB
 ```
-
-## OK let's make this quicker. We do Passwordless Sudo for flipping our SDWire Mux
-
-https://help.ubuntu.com/community/Sudoers
-
-```bash
-sudo visudo
-<<
-user ALL=(ALL) NOPASSWD: /home/user/copy-image.sh
->>
-```
-
-Edit /home/user/copy-image.sh <br> (Remember to chmod +x /home/user/copy-image.sh)
-
-```bash
-set -e  ## Exit when any command fails
-set -x  ## Echo commands
-whoami  ## I am root!
-
-## Copy /tmp/Image to MicroSD
-sd-mux-ctrl --device-serial=sd-wire_02-09 --ts
-sleep 5
-mkdir -p /tmp/sda1
-mount /dev/sda1 /tmp/sda1
-cp /tmp/Image /tmp/sda1/
-ls -l /tmp/sda1
-
-## Unmount MicroSD and flip it to the Test Device (Avaota-A1 SBC)
-umount /tmp/sda1
-sd-mux-ctrl --device-serial=sd-wire_02-09 --dut
-```
-
-Build Script
-- https://gist.github.com/lupyuen/a4ac110fb8610a976c0ce2621cbb8587
 
 ## Troubleboot the MMU. Why won't it start?
 
