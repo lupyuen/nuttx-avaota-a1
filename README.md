@@ -301,7 +301,7 @@ We used these docs (A527 is a variant of A523)
 
 # Work In Progress
 
-We take NuttX for Arm64 QEMU knsh and tweak it iteratively for Avaota-A1 SBC, based on Allwinner A537 SoC...
+We take NuttX for Arm64 QEMU knsh (Kernel Build) and tweak it iteratively for Avaota-A1 SBC, based on Allwinner A527 SoC...
 
 ## Let's make our Build-Test Cycle quicker. We do Passwordless Sudo for flipping our SDWire Mux
 
