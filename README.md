@@ -116,6 +116,8 @@ curl \
 set -x  ##  Enable echo
 ```
 
+[(See the __Build Log__)](https://gist.github.com/lupyuen/c7aebd4616db0167f12166fe2bc7ffa1)
+
 # Boot NuttX for Avaota-A1
 
 Here's the latest boot log:
