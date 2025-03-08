@@ -298,6 +298,7 @@ set -x  ## Echo commands
 whoami
 sd-mux-ctrl --device-serial=sd-wire_02-09 --ts
 sleep 5
+mkdir -p /tmp/sda1
 mount /dev/sda1 /tmp/sda1
 cp /tmp/Image /tmp/sda1/
 ls -l /tmp/sda1
