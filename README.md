@@ -53,6 +53,14 @@ We'll overwrite the `Image` file by `nuttx.bin`...
 
 # Build NuttX for Avaota-A1
 
+Our Avaota-A1 SBC is connected to SDWire MicroSD Multiplexer and Smart Power Plug (pic above). So our Build Script will do __everything__ for us:
+
+- Copy NuttX to MicroSD
+
+- Swap MicroSD from our Test PC to SBC
+
+- Power up SBC and boot NuttX!
+
 See the Build Script:
 - https://gist.github.com/lupyuen/a4ac110fb8610a976c0ce2621cbb8587
 
@@ -118,9 +126,11 @@ set -x  ##  Enable echo
 
 [(See the __Build Log__)](https://gist.github.com/lupyuen/c7aebd4616db0167f12166fe2bc7ffa1)
 
+(__copy-image.sh__ is explained below)
+
 # Boot NuttX for Avaota-A1
 
-Here's the latest boot log:
+Here's the latest NuttX Boot Log:
 - https://gist.github.com/lupyuen/3c587ac0f32be155c8f9a9e4ca18676c
 
 <span style="font-size:60%">
@@ -513,3 +523,5 @@ Disable MM Logging
 - https://gist.github.com/lupyuen/3c587ac0f32be155c8f9a9e4ca18676c
 
 ## TODO: Load the NuttX Apps into RAM
+
+## TODO: Fix the UART Interrupt
