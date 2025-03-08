@@ -411,5 +411,8 @@ GICDA_CTLR 0x160000 Distributor Control Register
 Set Address of GICD, GICR
 - https://github.com/lupyuen2/wip-nuttx/commit/f3a26dbba69a0714bc91d0c345b8fba5e0835b76
 
+Disable MM Logging
+- https://github.com/lupyuen2/wip-nuttx/commit/10c7173b142f4a0480d742688c72499b76f66f83
+
 /system/bin/init is missing yay!
-https://gist.github.com/lupyuen/8411f1846f51f66f6a50cc5157df40f9
+- https://gist.github.com/lupyuen/3c587ac0f32be155c8f9a9e4ca18676c
