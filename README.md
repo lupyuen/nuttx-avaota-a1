@@ -377,3 +377,13 @@ Assertion fails
 up_allocate_kheap: CONFIG_RAM_END=0x40800000, g_idle_topstack=0x40843000
 dump_assert_info: Assertion failed
 ```
+
+CONFIG_RAM_SIZE should match CONFIG_RAMBANK1_SIZE
+- https://github.com/lupyuen2/wip-nuttx/commit/c8fbc5b86c2bf1dd7b8243b301b0790115c9c4ca
+
+Assertion failure
+- https://gist.github.com/lupyuen/3a7d1e791ac14905532db2d768ae230f
+
+```text
+dump_assert_info: Assertion failed panic: at file: common/arm64_fatal.c:572 task: Idle_Task process: Kernel 0x408067b0
+```
