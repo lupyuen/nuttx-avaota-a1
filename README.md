@@ -36,7 +36,68 @@ Well thankfully we have a __MicroSD Multiplexer__ that will make MicroSD Swappin
 
 ![Avaota A1: Default U-Boot in eMMC. No network :-(](https://lupyuen.org/images/testbot3-uboot.jpg)
 
-# TODO
+# Work In Progress
+
+See Build Script
+- https://gist.github.com/lupyuen/a4ac110fb8610a976c0ce2621cbb8587
+
+```bash
+## Build NuttX and Apps (NuttX Kernel Build)
+git clone https://github.com/lupyuen2/wip-nuttx nuttx --branch avaota
+git clone https://github.com/lupyuen2/wip-nuttx-apps apps --branch avaota
+cd nuttx
+tools/configure.sh qemu-armv8a:knsh
+make -j
+make -j export
+pushd ../apps
+./tools/mkimport.sh -z -x ../nuttx/nuttx-export-*.tar.gz
+make -j import
+popd
+
+## Get the Home Assistant Token, copied from http://localhost:8123/profile/security
+## token=xxxx
+set +x  ##  Disable echo
+. $HOME/home-assistant-token.sh
+set -x  ##  Enable echo
+
+set +x  ##  Disable echo
+echo "----- Power Off the SBC"
+curl \
+    -X POST \
+    -H "Authorization: Bearer $token" \
+    -H "Content-Type: application/json" \
+    -d '{"entity_id": "automation.starpro64_power_off"}' \
+    http://localhost:8123/api/services/automation/trigger
+set -x  ##  Enable echo
+
+## Copy NuttX Image to MicroSD
+scp nuttx.bin thinkcentre:/tmp/Image
+ssh thinkcentre ls -l /tmp/Image
+ssh thinkcentre sudo /home/user/copy-image.sh
+
+set +x  ##  Disable echo
+echo "----- Power On the SBC"
+curl \
+    -X POST \
+    -H "Authorization: Bearer $token" \
+    -H "Content-Type: application/json" \
+    -d '{"entity_id": "automation.starpro64_power_on"}' \
+    http://localhost:8123/api/services/automation/trigger
+set -x  ##  Enable echo
+
+## Wait for SBC to finish booting
+sleep 30
+
+set +x  ##  Disable echo
+echo "----- Power Off the SBC"
+curl \
+    -X POST \
+    -H "Authorization: Bearer $token" \
+    -H "Content-Type: application/json" \
+    -d '{"entity_id": "automation.starpro64_power_off"}' \
+    http://localhost:8123/api/services/automation/trigger
+set -x  ##  Enable echo
+```
 
 Allwinner A537 Docs:
 - https://linux-sunxi.org/A523
