@@ -324,6 +324,8 @@ sd-mux-ctrl --device-serial=sd-wire_02-09 --dut
 Build Script
 - https://gist.github.com/lupyuen/a4ac110fb8610a976c0ce2621cbb8587
 
+## Troubleboot the MMU. Why won't it start?
+
 Enable Logging for Scheduler and MMU
 - https://github.com/lupyuen2/wip-nuttx/commit/6f98f8a7cd214baa07288f581e58725aa76e4e58
 
@@ -338,6 +340,8 @@ Fix MMU Logging
 
 Now stuck at: `enable_mmu_el1: Enable the MMU and data cache`
 - https://gist.github.com/lupyuen/9e3d1325dc90abc5b695a849a16e9560
+
+## CONFIG_ARCH_PGPOOL_PBASE is different from pgram in Linker Script. Let's fix it...
 
 CONFIG_ARCH_PGPOOL_PBASE should match pgram
 - https://github.com/lupyuen2/wip-nuttx/commit/eb33ac06f88dda557bc8ac97bec7d6cbad4ccb86
@@ -363,7 +367,7 @@ RISC-V core accesses theDRAM address:
 0x4004 0000---0x7FFFFFFF
 ```
 
-## Let's do some MMU Logging and fix the Peripheral Address Space...
+## Let's fix the Peripheral Address Space (0x0 to 0x40000000, 1 GB)
 
 Remove UART1
 - https://github.com/lupyuen2/wip-nuttx/commit/8fc8ed6ba84cfea86184f61d9c4d7c8e21329987
