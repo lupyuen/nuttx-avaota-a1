@@ -234,12 +234,12 @@ enable_mmu_el1: Enable the MMU and data cache
 
 # Work In Progress
 
-Allwinner A537 Docs:
+## Allwinner A537 Docs:
 - https://linux-sunxi.org/A523
 - https://linux-sunxi.org/File:A527_Datasheet_V0.93.pdf
 - https://linux-sunxi.org/File:A523_User_Manual_V1.1_merged_cleaned.pdf
 
-UART0 Port:
+## UART0 Port is here:
 
 ```text
 Page 1839
@@ -257,6 +257,8 @@ UART_FCR 0x0008 UART FIFO Control Register
 UART_LCR 0x000C UART Line Control 
 ```
 
+## Bootloader Log says that Start Address is 0x40800000. We change it...
+
 Change start address to 0x40800000
 - https://github.com/lupyuen2/wip-nuttx/commit/c38e1f7c014e1af648a33847fc795930ba995bca
 
@@ -269,6 +271,8 @@ Prints 123 yay!
 Enable 16650 UART
 - https://github.com/lupyuen2/wip-nuttx/commit/0cde58d84c16f255cb12e5a647ebeee3b6a8dd5f
 
+## UART Buffer overflows. Let's wait for UART Ready...
+
 Wait for 16550 UART to be ready to transmit
 - https://github.com/lupyuen2/wip-nuttx/commit/544323e7c0e66c4df0d1312d4837147d420bc19d
 
@@ -277,11 +281,16 @@ Add boot logging
 
 Prints more yay!
 - https://gist.github.com/lupyuen/563ed00d3f6e9f7fb9b27268d4eae26b
+
+```text
 - Ready to Boot Primary CPU
 - Boot from EL2
 - Boot from EL1
 - Boot to C runtime for OS Initialize
 AB
+```
+
+## OK let's make this quicker. We do Passwordless Sudo for flipping our SDWire Mux...
 
 https://help.ubuntu.com/community/Sudoers
 
@@ -336,6 +345,8 @@ CONFIG_ARCH_PGPOOL_PBASE should match pgram
 Still stuck at: `enable_mmu_el1: Enable the MMU and data cache`
 - https://gist.github.com/lupyuen/544a5d8f3fab2ab7c9d06d2e1583f362
 
+## Hmmm the Peripheral Address Space is missing. UART0 will crash!
+
 Memory Map: Page 42
 
 ```text
@@ -352,6 +363,8 @@ RISC-V core accesses theDRAM address:
 0x4004 0000---0x7FFFFFFF
 ```
 
+## Let's do some MMU Logging and fix the Peripheral Address Space...
+
 Remove UART1
 - https://github.com/lupyuen2/wip-nuttx/commit/8fc8ed6ba84cfea86184f61d9c4d7c8e21329987
 
@@ -364,8 +377,10 @@ Remove PCI from MMU Regions
 Set CONFIG_DEVICEIO_BASEADDR to 0x00000000, size 1 GB (0x40000000)
 - https://github.com/lupyuen2/wip-nuttx/commit/005900ef7e1a1480b8df975d0dcd190fbfc60a45
 
-Stack full yay!
+`up_allocate_kheap: heap_start=0x0x40843000, heap_size=0xfffffffffffbd000`
 - https://gist.github.com/lupyuen/ad4cec0dee8a21f3f404144be180fa14
+
+## Whoa Heap Size is wrong! Let's find out why...
 
 Assert CONFIG_RAM_END > g_idle_topstack
 - https://github.com/lupyuen2/wip-nuttx/commit/480bbc64af4ca64c104964c24f430c6de48326b5
@@ -378,6 +393,8 @@ up_allocate_kheap: CONFIG_RAM_END=0x40800000, g_idle_topstack=0x40843000
 dump_assert_info: Assertion failed
 ```
 
+## Oops CONFIG_RAM_END is too small. Let's enlarge...
+
 CONFIG_RAM_SIZE should match CONFIG_RAMBANK1_SIZE
 - https://github.com/lupyuen2/wip-nuttx/commit/c8fbc5b86c2bf1dd7b8243b301b0790115c9c4ca
 
@@ -388,6 +405,8 @@ GIC Failed
 gic_validate_dist_version: No GIC version detect
 arm64_gic_initialize: no distributor detected, giving up ret=-19
 ```
+
+## Ah we forgot the GIC Address!
 
 Page 263
 ```text
@@ -416,3 +435,5 @@ Disable MM Logging
 
 /system/bin/init is missing yay!
 - https://gist.github.com/lupyuen/3c587ac0f32be155c8f9a9e4ca18676c
+
+## TODO: Load the NuttX Apps into RAM
