@@ -291,17 +291,21 @@ user ALL=(ALL) NOPASSWD: /home/user/copy-image.sh
 ```
 
 Edit /home/user/copy-image.sh <br> (Remember to chmod +x /home/user/copy-image.sh)
+
 ```bash
 set -e  ## Exit when any command fails
 set -x  ## Echo commands
+whoami  ## I am root!
 
-whoami
+## Copy /tmp/Image to MicroSD
 sd-mux-ctrl --device-serial=sd-wire_02-09 --ts
 sleep 5
 mkdir -p /tmp/sda1
 mount /dev/sda1 /tmp/sda1
 cp /tmp/Image /tmp/sda1/
 ls -l /tmp/sda1
+
+## Unmount MicroSD and flip it to the Test Device (Avaota-A1 SBC)
 umount /tmp/sda1
 sd-mux-ctrl --device-serial=sd-wire_02-09 --dut
 ```
