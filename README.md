@@ -543,6 +543,14 @@ Disable MM Logging
 /system/bin/init is missing yay!
 - https://gist.github.com/lupyuen/3c587ac0f32be155c8f9a9e4ca18676c
 
+## Remove the HostFS for Semihosting
+
+Remove HostFS for Semihosting
+- https://github.com/lupyuen2/wip-nuttx/commit/40c4ab530dad2b7db0f354a2fa4b5e0f5263fb4e
+
+OK the Initial Filesystem is no longer available:
+- https://gist.github.com/lupyuen/e74c29049f20c76a2c4fe6f863d55507
+
 ## TODO: Load the NuttX Apps into RAM
 
 ## TODO: Fix the UART Interrupt
