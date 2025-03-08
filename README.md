@@ -49,6 +49,8 @@ Write the __`.img`__ file to a MicroSD with [__Balena Etcher__](https://etcher.b
 
 We'll overwrite the `Image` file by `nuttx.bin`...
 
+![Avaota-A1 SBC with SDWire MicroSD Multiplexer and Smart Power Plug](https://lupyuen.org/images/avaota-title.jpg)
+
 # Build NuttX for Avaota-A1
 
 See the Build Script:
