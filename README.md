@@ -366,3 +366,14 @@ Set CONFIG_DEVICEIO_BASEADDR to 0x00000000, size 1 GB (0x40000000)
 
 Stack full yay!
 - https://gist.github.com/lupyuen/ad4cec0dee8a21f3f404144be180fa14
+
+Assert CONFIG_RAM_END > g_idle_topstack
+- https://github.com/lupyuen2/wip-nuttx/commit/480bbc64af4ca64c104964c24f430c6de48326b5
+
+Assertion fails
+- https://gist.github.com/lupyuen/5f97773dcafc345a3510851629095c92
+
+```text
+up_allocate_kheap: CONFIG_RAM_END=0x40800000, g_idle_topstack=0x40843000
+dump_assert_info: Assertion failed
+```
