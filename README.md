@@ -2,6 +2,8 @@
 
 # Apache NuttX RTOS for Avaota-A1 SBC (Allwinner A527 SoC)
 
+[(Watch the __Demo on YouTube__)](https://youtu.be/PxaMcmMAzlM)
+
 _How about booting and testing NuttX on Avaota-A1 SBC?_
 
 Exactly! Here's why Avaota-A1 SBC should run NuttX...
