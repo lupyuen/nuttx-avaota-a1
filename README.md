@@ -558,8 +558,67 @@ Enable Logging for RAM Disk
 - https://github.com/lupyuen2/wip-nuttx/commit/60007f1b97b6af4445c793904c30d65ebbebb337
 
 `default_fatal_handler: (IFSC/DFSC) for Data/Instruction aborts: alignment fault`
-https://gist.github.com/lupyuen/f10af7903461f44689203d0e02fb9949
+- https://gist.github.com/lupyuen/f10af7903461f44689203d0e02fb9949
 
-## TODO: Fix the alignment fault
+Our RAM Disk Copier is accessing misligned addresses. Let's fix the alignment...
+
+Align RAM Disk Address to 8 bytes. Search from Idle Stack Top instead of EDATA.
+- https://github.com/lupyuen2/wip-nuttx/commit/07d9c387a7cb06ccec53e20eecd0c4bb9bad7109
+
+Log the Mount Error
+- https://github.com/lupyuen2/wip-nuttx/commit/38538f99333868f85b67e2cb22958fe496e285d6
+
+Mounting of ROMFS fails
+- https://gist.github.com/lupyuen/d12e44f653d5c5597ecae6845e49e738
+
+```text
+nx_start_application: ret=-15
+dump_assert_info: Assertion failed : at file: init/nx_bringup.c:361
+```
+
+Which is...
+
+```c
+#define ENOTBLK             15
+#define ENOTBLK_STR         "Block device required"
+```
+
+/dev/ram0 is not a Block Device?
+
+```c
+$ grep INIT .config
+# CONFIG_BOARDCTL_FINALINIT is not set
+# CONFIG_INIT_NONE is not set
+CONFIG_INIT_FILE=y
+CONFIG_INIT_ARGS=""
+CONFIG_INIT_STACKSIZE=8192
+CONFIG_INIT_PRIORITY=100
+CONFIG_INIT_FILEPATH="/system/bin/init"
+CONFIG_INIT_MOUNT=y
+CONFIG_INIT_MOUNT_SOURCE="/dev/ram0"
+CONFIG_INIT_MOUNT_TARGET="/system/bin"
+CONFIG_INIT_MOUNT_FSTYPE="romfs"
+CONFIG_INIT_MOUNT_FLAGS=0x1
+CONFIG_INIT_MOUNT_DATA=""
+```
+
+We check the logs...
+
+Enable Filesystem Logging
+- https://github.com/lupyuen2/wip-nuttx/commit/cc4dffd60fd223a7c1f6b513dc99e1fa98a48496
+
+`Failed to find /dev/ram0`
+- https://gist.github.com/lupyuen/805c2be2a3333a90c96926a26ec2d8cc
+
+```text
+find_blockdriver: pathname="/dev/ram0"
+find_blockdriver: ERROR: Failed to find /dev/ram0
+nx_mount: ERROR: Failed to find block driver /dev/ram0
+nx_start_application: ret=-15
+```
+
+Is /dev/ram0 created?
+
+## TODO: ROMFS Mounting
 
 ## TODO: Fix the UART Interrupt
