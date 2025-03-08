@@ -310,10 +310,11 @@ SDWire Mux needs plenty of Sudo Passwords to flip the mux, mount the filesystem,
 Let's make it Sudo Password-Less with visudo: https://help.ubuntu.com/community/Sudoers
 
 ```bash
+## Start the Sudoers Editor
 sudo visudo
-<<
+
+## Add this line:
 user ALL=(ALL) NOPASSWD: /home/user/copy-image.sh
->>
 ```
 
 Edit /home/user/copy-image.sh...
