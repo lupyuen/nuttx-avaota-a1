@@ -777,7 +777,7 @@ nx_mount: ERROR: Failed to find block driver /dev/ram0
 nx_start_application: ret=-15
 ```
 
-Is /dev/ram0 created?
+Is /dev/ram0 created? Ah we forgot to Mount the RAM Disk!
 
 ## Mount the RAM Disk
 
@@ -797,5 +797,7 @@ nxtask_exit: AppBringUp pid=3,TCB=0x40846190
 board_app_initialize:
 nx_start: CPU0: Beginning Idle Loop
 ```
+
+NSH Prompt won't appear until we fix the UART Interrupt...
 
 ## TODO: Fix the UART Interrupt
