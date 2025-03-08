@@ -554,8 +554,11 @@ OK the Initial Filesystem is no longer available:
 Add the Initial RAM Disk
 - https://github.com/lupyuen2/wip-nuttx/commit/cf5fe66b97f4526fb8dfc993415ac04ce96f4c13
 
+Enable Logging for RAM Disk
+- https://github.com/lupyuen2/wip-nuttx/commit/60007f1b97b6af4445c793904c30d65ebbebb337
+
 `default_fatal_handler: (IFSC/DFSC) for Data/Instruction aborts: alignment fault`
-https://gist.github.com/lupyuen/a5576bc3806f9876955e15e0a8d040b2
+https://gist.github.com/lupyuen/f10af7903461f44689203d0e02fb9949
 
 ## TODO: Fix the alignment fault
 
