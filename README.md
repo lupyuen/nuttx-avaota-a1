@@ -329,3 +329,9 @@ Fix MMU Logging
 
 Now stuck at: `enable_mmu_el1: Enable the MMU and data cache`
 - https://gist.github.com/lupyuen/9e3d1325dc90abc5b695a849a16e9560
+
+CONFIG_ARCH_PGPOOL_PBASE should match pgram
+- https://github.com/lupyuen2/wip-nuttx/commit/eb33ac06f88dda557bc8ac97bec7d6cbad4ccb86
+
+Still stuck at: `enable_mmu_el1: Enable the MMU and data cache`
+- https://gist.github.com/lupyuen/544a5d8f3fab2ab7c9d06d2e1583f362
