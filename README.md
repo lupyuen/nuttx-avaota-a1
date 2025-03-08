@@ -55,6 +55,8 @@ We'll overwrite the `Image` file by `nuttx.bin`...
 
 # Build NuttX for Avaota-A1
 
+[(Watch the __Demo on YouTube__)](https://youtu.be/PxaMcmMAzlM)
+
 Our Avaota-A1 SBC is connected to SDWire MicroSD Multiplexer and Smart Power Plug (pic above). So our Build Script will do __everything__ for us:
 
 - Copy NuttX to MicroSD
@@ -140,6 +142,8 @@ set -x  ##  Enable echo
 (__copy-image.sh__ is explained below)
 
 # Boot NuttX for Avaota-A1
+
+[(Watch the __Demo on YouTube__)](https://youtu.be/PxaMcmMAzlM)
 
 NuttX boots to NSH Shell. And passes OSTest yay!
 
