@@ -26,7 +26,7 @@ Exactly! Here's why Avaota-A1 SBC should run NuttX...
 
 We'll take the NuttX Kernel Build for [__QEMU Arm64__](https://github.com/apache/nuttx/blob/master/boards/arm64/qemu/qemu-armv8a/configs/knsh/defconfig), boot it on Avaota-A1 SBC. We're making terrific progress with __NuttX on Avaota SBC__...
 
-> ![NuttX on Avaota-A1](https://lupyuen.org/images/testbot3-port.png)
+![NuttX on Avaota-A1](https://lupyuen.org/images/testbot3-port.png)
 
 _Isn't it faster to port NuttX with U-Boot TFTP?_
 
@@ -556,7 +556,7 @@ Which is...
 #define ENOTBLK_STR         "Block device required"
 ```
 
-/dev/ram0 is not a Block Device?
+Why is /dev/ram0 not a Block Device?
 
 ```c
 $ grep INIT .config
@@ -594,6 +594,8 @@ Is /dev/ram0 created? Ah we forgot to Mount the RAM Disk!
 
 ## Mount the RAM Disk
 
+Let's mount the RAM Disk...
+
 Mount the RAM Disk
 - https://github.com/lupyuen2/wip-nuttx/commit/65ae74507e95189e96816161b0c1a820722ca8a2
 
@@ -613,7 +615,7 @@ nx_start: CPU0: Beginning Idle Loop
 
 NSH Prompt won't appear until we fix the UART Interrupt...
 
-## TODO: Fix the UART Interrupt
+## Fix the UART Interrupt
 
 From [A523 User Manual](https://linux-sunxi.org/File:A523_User_Manual_V1.1_merged_cleaned.pdf), Page 256
 
@@ -635,4 +637,3 @@ Disable MMU Debugging
 
 NSH Prompt appears! And passes OSTest yay!
 - https://gist.github.com/lupyuen/c2248e7537ca98333d47e33b232217b6
-
