@@ -142,57 +142,78 @@ aarch64-none-elf-objdump \
   >hello.S \
   2>&1
 
-## Get the Home Assistant Token, copied from http://localhost:8123/profile/security
-## token=xxxx
-set +x  ##  Disable echo
-. $HOME/home-assistant-token.sh
-set -x  ##  Enable echo
-
-set +x  ##  Disable echo
-echo "----- Power Off the SBC"
-curl \
-    -X POST \
-    -H "Authorization: Bearer $token" \
-    -H "Content-Type: application/json" \
-    -d '{"entity_id": "automation.avaota_power_off"}' \
-    http://localhost:8123/api/services/automation/trigger
-set -x  ##  Enable echo
-
 ## Copy NuttX Image to MicroSD
+## https://github.com/lupyuen/nuttx-avaota-a1/blob/main/copy-image.sh
 scp Image thinkcentre:/tmp/Image
 ssh thinkcentre ls -l /tmp/Image
 ssh thinkcentre sudo /home/user/copy-image.sh
 
-set +x  ##  Disable echo
-echo "----- Power On the SBC"
-curl \
-    -X POST \
-    -H "Authorization: Bearer $token" \
-    -H "Content-Type: application/json" \
-    -d '{"entity_id": "automation.avaota_power_on"}' \
-    http://localhost:8123/api/services/automation/trigger
-set -x  ##  Enable echo
+## Boot and Test NuttX Automatically
+function auto_test {
+  ## Boot and Test NuttX
+  ## https://github.com/lupyuen/nuttx-build-farm/blob/main/avaota.exp
+  export AVAOTA_SERVER=thinkcentre
+  pushd $HOME/nuttx-build-farm
+  expect ./avaota.exp
+  popd
+}
 
-echo Press Enter to Power Off
-read
+## Boot and Test NuttX Manually
+function manual_test {
+  ## Get the Home Assistant Token, copied from http://localhost:8123/profile/security
+  ## token=xxxx
+  set +x  ##  Disable echo
+  . $HOME/home-assistant-token.sh
+  set -x  ##  Enable echo
 
-set +x  ##  Disable echo
-echo "----- Power Off the SBC"
-curl \
-    -X POST \
-    -H "Authorization: Bearer $token" \
-    -H "Content-Type: application/json" \
-    -d '{"entity_id": "automation.avaota_power_off"}' \
-    http://localhost:8123/api/services/automation/trigger
-set -x  ##  Enable echo
+  set +x  ##  Disable echo
+  echo "----- Power Off the SBC"
+  curl \
+      -X POST \
+      -H "Authorization: Bearer $token" \
+      -H "Content-Type: application/json" \
+      -d '{"entity_id": "automation.avaota_power_off"}' \
+      http://localhost:8123/api/services/automation/trigger
+  set -x  ##  Enable echo
 
+  set +x  ##  Disable echo
+  echo "----- Power On the SBC"
+  curl \
+      -X POST \
+      -H "Authorization: Bearer $token" \
+      -H "Content-Type: application/json" \
+      -d '{"entity_id": "automation.avaota_power_on"}' \
+      http://localhost:8123/api/services/automation/trigger
+  set -x  ##  Enable echo
+
+  echo Press Enter to Power Off
+  read
+
+  set +x  ##  Disable echo
+  echo "----- Power Off the SBC"
+  curl \
+      -X POST \
+      -H "Authorization: Bearer $token" \
+      -H "Content-Type: application/json" \
+      -d '{"entity_id": "automation.avaota_power_off"}' \
+      http://localhost:8123/api/services/automation/trigger
+  set -x  ##  Enable echo
+}
+
+## Boot and Test NuttX
+auto_test
+# manual_test
+
+## Clean up
 rm -rf \
   hello.S \
   Image \
   init.S \
   initrd \
   boards/risc-v/sg2000/milkv_duos/src/etctmp
-exit ####
+
+## We're done!
+exit
 
 ## On Test PC
 sudo --login

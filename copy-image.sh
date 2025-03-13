@@ -15,6 +15,7 @@ sleep 5
 mkdir -p /tmp/sda1
 mount /dev/sda1 /tmp/sda1
 cp /tmp/Image /tmp/sda1/
+rm /tmp/Image
 ls -l /tmp/sda1
 
 ## Unmount MicroSD and flip it to the Test Device (Avaota-A1)
