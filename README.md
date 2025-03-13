@@ -4,31 +4,29 @@
 
 [(Watch the __Demo on YouTube__)](https://youtu.be/PxaMcmMAzlM)
 
-_How about booting and testing NuttX on Avaota-A1 SBC?_
+This article explains how we ported NuttX from [__QEMU Arm64 Kernel Build__](https://github.com/apache/nuttx/blob/master/boards/arm64/qemu/qemu-armv8a/configs/knsh/defconfig) to [__PINE64 Yuzuki Avaota-A1 SBC__](https://pine64.com/product/yuzuki-avaota-a1-single-board-computer-4gb-32gb/) based on [__Allwinner A527 SoC__](https://linux-sunxi.org/A523) ... Completed within [__24 Hours__](https://github.com/lupyuen2/wip-nuttx/commits/avaota)!
 
-Exactly! Here's why Avaota-A1 SBC should run NuttX...
+_Why are we doing this?_
 
-- __Avaota-A1__ has the latest Octa-Core Arm64 SoC: __Allwinner A527__
+- Anyone porting NuttX from __QEMU to Real SBC__? This walkthrough shall be mighty helpful!
 
-  _(Bonus: There's a tiny RISC-V Core inside)_
+- Avaota-A1 SBC is [__Open Source Hardware__](https://github.com/AvaotaSBC/Avaota-A1) _(CERN OHL Licensed)_. PINE64 sells it today, maybe we'll see more manufacturers.
 
-- [__NuttX Kernel Build__](https://lupyuen.github.io/articles/rust5#nuttx-flat-mode-vs-kernel-mode) sounds ideal for Allwinner A527 SoC
+- This could be the First Port of [__Arm64 in NuttX Kernel Build__](https://lupyuen.github.io/articles/privilege#nuttx-flat-mode-becomes-kernel-mode). _(NXP i.MX93 might be another?)_
 
-  _(Instead of the restrictive Flat Build)_
+- We'll run it as [__PR Test Bot__](https://lupyuen.github.io/articles/testbot3) for validating __Arm64 Pull Requests__ on Real Hardware. PR Test Bot will be fully automated thanks to the [__MicroSD Multiplexer__](https://lupyuen.github.io/articles/testbot3).
 
-- __Avaota-A1__ could be the first Arm64 Port of NuttX Kernel Build
+We're ready for volunteers to build __NuttX Drivers for Avaota-A1 / Allwinner A527__ _(GPIO, SPI, I2C, MIPI CSI / DSI, Ethernet, WiFi, ...)_ Please lemme know! 🙏
 
-  [_(NXP i.MX93 might be another)_](https://github.com/apache/nuttx/pull/15556)
+- [__Sunxi Docs on Allwinner A527__](https://linux-sunxi.org/A523)
 
-- __SDWire MicroSD Multiplexer__: Avaota SBC was previously the __Test Server__, now it becomes the __Test Device__
+- [__Allwinner A527 Datasheet__](https://linux-sunxi.org/File:A527_Datasheet_V0.93.pdf)
 
-  _(Porting NuttX gets a lot quicker)_
+- [__Allwinner A523 User Manual__](https://linux-sunxi.org/File:A523_User_Manual_V1.1_merged_cleaned.pdf) _(A527 is similar to A523)_
 
-- __Open-Source RTOS__ _(NuttX)_ tested on __Open-Source Hardware__ _(Avaota-A1)_ ... Perfectly sensible!
+- [__Avaota-A1 Schematic__](https://github.com/AvaotaSBC/Avaota-A1/blob/master/hardware/v1.4/01_SCH/SCH_Avaota%20Pi%20A_2024-05-20.pdf)
 
-We'll take the NuttX Kernel Build for [__QEMU Arm64__](https://github.com/apache/nuttx/blob/master/boards/arm64/qemu/qemu-armv8a/configs/knsh/defconfig), boot it on Avaota-A1 SBC. We're making terrific progress with __NuttX on Avaota SBC__...
-
-![NuttX on Avaota-A1](https://lupyuen.org/images/testbot3-port.png)
+_(BTW I bought all the hardware covered in this article. Nope, nothing was sponsored: Avaota-A1, SDWire, IKEA TRETAKT)_
 
 _Isn't it faster to port NuttX with U-Boot TFTP?_
 
