@@ -48,8 +48,7 @@ rm -rf \
   hello.S \
   Image \
   init.S \
-  initrd \
-  boards/risc-v/sg2000/milkv_duos/src/etctmp
+  initrd
 
 ## Build NuttX
 function build_nuttx {
@@ -200,7 +199,7 @@ function manual_test {
   set -x  ##  Enable echo
 }
 
-## Boot and Test NuttX
+## Boot and Test NuttX (Auto or Manual)
 auto_test
 # manual_test
 
@@ -209,8 +208,7 @@ rm -rf \
   hello.S \
   Image \
   init.S \
-  initrd \
-  boards/risc-v/sg2000/milkv_duos/src/etctmp
+  initrd
 
 ## We're done!
 exit
