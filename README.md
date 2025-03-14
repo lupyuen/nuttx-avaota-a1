@@ -2,7 +2,7 @@
 
 # Apache NuttX RTOS for Avaota-A1 SBC (Allwinner A527 SoC)
 
-[(Watch the __Demo on YouTube__)](https://youtu.be/PxaMcmMAzlM)
+[(Watch the __Demo on YouTube__)](https://youtu.be/XTDw245n5tM)
 
 This article explains how we ported NuttX from [__QEMU Arm64 Kernel Build__](https://github.com/apache/nuttx/blob/master/boards/arm64/qemu/qemu-armv8a/configs/knsh/defconfig) to [__PINE64 Yuzuki Avaota-A1 SBC__](https://pine64.com/product/yuzuki-avaota-a1-single-board-computer-4gb-32gb/) based on [__Allwinner A527 SoC__](https://linux-sunxi.org/A523) ... Completed within [__24 Hours__](https://github.com/lupyuen2/wip-nuttx/commits/avaota)!
 
@@ -53,7 +53,7 @@ We'll overwrite the `Image` file by `nuttx.bin`...
 
 # Build NuttX for Avaota-A1
 
-[(Watch the __Demo on YouTube__)](https://youtu.be/PxaMcmMAzlM)
+[(Watch the __Demo on YouTube__)](https://youtu.be/XTDw245n5tM)
 
 Our Avaota-A1 SBC is connected to SDWire MicroSD Multiplexer and Smart Power Plug (pic above). So our Build Script will do __everything__ for us:
 
@@ -141,7 +141,7 @@ set -x  ##  Enable echo
 
 # Boot NuttX for Avaota-A1
 
-[(Watch the __Demo on YouTube__)](https://youtu.be/PxaMcmMAzlM)
+[(Watch the __Demo on YouTube__)](https://youtu.be/XTDw245n5tM)
 
 NuttX boots to NSH Shell. And passes OSTest yay!
 
